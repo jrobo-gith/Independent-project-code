@@ -1,0 +1,11 @@
+startup-flow-central-differences_1:- Removed to make way for Runge-Kutta method which is a better, pre-built solver so
+it's more reliable.
+
+startup-flow-central-differences_2:- Removed because it was a bad attempt at solving it and was going in the wrong
+direction. Thomasina and i discussed it and we didnt have enough BCs to do it that way, so we had to do it a more
+difficult way.
+
+startup-flow-Runge-Kutta:- Removed because it was close but didnt use Runge-Kutta and required a clean restart.
+
+startup-flow-fwd-bwd:- Attempt at Ferran's advice of using forward and backward differences to solve the eq, turns
+out he was talking about using the finite volume method in conjunction with finite differences, I need to start again.
