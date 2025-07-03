@@ -33,7 +33,6 @@ print(solution.status)
 print(solution.success)
 print(solution.message)
 
-
 fig = plt.figure()
 plt.plot(x, solution.y[:, -1], label=f't={t_span[1]}')
 plt.plot(x, solution.y[:, 0], label='t=0')
@@ -43,4 +42,4 @@ plt.ylabel("Height (h)")
 plt.legend()
 plt.show()
 
-fig.savefig("finite-vol-images/failed/initial.png")
+# fig.savefig("finite-vol-images/failed/initial.png")
