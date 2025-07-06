@@ -8,7 +8,7 @@ import numpy as np
 from scipy.integrate import solve_bvp
 
 # Define Hyperparameters
-N = 1_000                                       # Number of grid points
+N = 10_000                                       # Number of grid points
 L = 10.0                                        # Length of solid
 Q = 0.7
 h_0 = 1.0
@@ -43,7 +43,8 @@ def plot_solution(solution):
     Plots the solution to the numerically solved thin film equation
     """
     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
-
+    axes.plot(solution.x, solution.y[0, :])
+    fig.show()
 
 # Run everything in main
 def main():
