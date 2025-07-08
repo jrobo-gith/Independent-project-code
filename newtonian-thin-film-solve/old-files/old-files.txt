@@ -9,3 +9,8 @@ startup-flow-Runge-Kutta:- Removed because it was close but didnt use Runge-Kutt
 
 startup-flow-fwd-bwd:- Attempt at Ferran's advice of using forward and backward differences to solve the eq, turns
 out he was talking about using the finite volume method in conjunction with finite differences, I need to start again.
+
+startup-flow-finite-vol_V1,2,3:- all didn't work because we weren't using the correct finite differences on the third
+order term, after ferran switched some stuff around it worked on the new file.
+
+meeting:- refers to the code wrote in the meeting dated 07/07/25, doesn't work but keeping just for reference.
