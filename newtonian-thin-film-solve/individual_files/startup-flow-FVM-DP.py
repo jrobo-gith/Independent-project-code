@@ -15,6 +15,13 @@ h_initial[0] = h_0
 
 t_span = (0, 100)
 
+# Disjoint pressure variables
+A = 0
+h_star = 0.005
+n = 4
+m = 3
+sigma = 0.004
+
 def make_step(h, i, pwr=3):
     """
     Try, excepts are for the BCs, as q_minus won't be computable for BCs at the start and q_plus won't be computable
@@ -23,12 +30,14 @@ def make_step(h, i, pwr=3):
     Dx = 1/dx**3
     try:
         non_linear_term =  ((h[i] + h[i+1])/2)**pwr
-        q_plus = Dx * non_linear_term * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + h[i]
+        DP = A * ((h_star/h[i])**n - (h_star/h[i])**m)
+        q_plus = Dx * non_linear_term * (sigma * -h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2] + DP) + h[i]
     except IndexError: q_plus = 0
 
     try:
         non_linear_term =  ((h[i] + h[i-1])/2)**pwr
-        q_minus = Dx * non_linear_term * (-h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1]) + h[i-1]
+        DP = A * ((h_star / h[i-1]) ** n - (h_star / h[i-1]) ** m)
+        q_minus = Dx * non_linear_term * (sigma * -h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1] + DP) + h[i-1]
     except IndexError: q_minus = 0
 
     return q_plus, q_minus
