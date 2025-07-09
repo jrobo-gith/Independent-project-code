@@ -1,5 +1,5 @@
 # Independant Project Code
-This repo contains code for the modelling of stability of thin films using Newtonian and non-Newtonian rheologies for the investigation into the conditions for which the film becomes unstable due to build up of disjoint pressure. These models will be applied to the slurry of a battery, where instabilities in the film cause the undesirable effect of inefficiency.
+This repo contains code for the modelling of stability of thin films using Newtonian and non-Newtonian rheologies for the investigation into the conditions for which the film becomes unstable due to build up of disjoint pressure. These models will be applied to the slurry of a battery, where instabilities in the film cause the undesirable effect of inefficiency. Progress on the dissertation write-up can be found [here](https://github.com/jrobo-gith/modelling-of-battery-electrodes) 
 
 ## Steps to completion 
 These are the rough steps to complete the project; to aquire the data needed to draw novel and interesting conclusions from their outputs.
