@@ -1,6 +1,9 @@
-# Used for small python testing, syntax and stuff
 import numpy as np
-N = 100
-x = np.linspace(0, 10, N)
+rows = 2
+cols = 4
 
-print(x[-1], x[N-1])
+j = 0
+for row in range(rows):
+    for col in range(cols):
+        j += 1
+        print(j)

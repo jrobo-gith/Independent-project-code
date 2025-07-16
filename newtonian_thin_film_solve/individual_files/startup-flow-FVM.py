@@ -78,5 +78,24 @@ try:
     ax.set_xlabel('Length $(x)$')
     fig.show()
 
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 10))
+
+    ax.plot(x, sol.y[:, 0], label=f'Initial, t={t_span[0]}')
+    ax.plot(x, sol.y[:, 10])
+    ax.plot(x, sol.y[:, int(sol.y.shape[1] / 10)])
+    ax.plot(x, sol.y[:, int(sol.y.shape[1] / 8)])
+    ax.plot(x, sol.y[:, int(sol.y.shape[1] / 6)])
+    ax.plot(x, sol.y[:, int(sol.y.shape[1] / 4)])
+    ax.plot(x, sol.y[:, int(sol.y.shape[1] / 2)])
+
+    print(sol.y[:, -1] == 0)
+    # ax.set_ylim(0, 1)
+    ax.grid(True)
+    ax.legend()
+    ax.set_title(f"Startup flow with $h_0$={h_0} and Q={Q}")
+    ax.set_ylabel('height$(h)$')
+    ax.set_xlabel('Length $(x)$')
+    fig.show()
+
 except ValueError:
     print("Value Error")
