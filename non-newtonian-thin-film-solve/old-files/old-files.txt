@@ -1,0 +1,1 @@
+collection:- Grouped newtonian and non-newtonian collections into one for simplicity.

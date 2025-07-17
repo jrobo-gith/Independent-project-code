@@ -14,3 +14,5 @@ startup-flow-finite-vol_V1,2,3:- all didn't work because we weren't using the co
 order term, after ferran switched some stuff around it worked on the new file.
 
 meeting:- refers to the code wrote in the meeting dated 07/07/25, doesn't work but keeping just for reference.
+
+collection:- Grouped newtonian and non-newtonian collections into one for simplicity.
