@@ -4,7 +4,6 @@ import json
 
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
-import matplotlib.pyplot as plt
 
 from newtonian_thin_film_solve.individual_files.steady_state_central_differences import solver
 from glob_var.FVM.FVM_RHS import FVM_RHS
@@ -19,64 +18,44 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
-
-
 if __name__ == '__main__':
     tolerance = 1e-4
-    placeholder_t_min = 100
-
-    # Get steady state solution for newtonian flow
-    SS_sol = solver()
-    f = interp1d(SS_sol.x, SS_sol.y[0, :])
-
-    steady_state_newtonian_solution = f(GV['x'])
-
-    saved_startup_sols = []
-    saved_error_arrays = []
-    saved_ts = []
-
+    t_list = {} # Dictionary with key: Lengths, value: min_t
     t = -10
-    av_error = 10000
-    while av_error > tolerance:
-        t += 10
-        print(f"Error is larger than tolerance: {np.round(av_error, 5)}, t is now {t}")
-        saved_ts.append(t)
-        n = 1.0
-        t_span = (0, t)
-        h_initial = np.ones(GV['N']) * GV['h0']
-        args = [PL_DP_make_step, GV['dx'], None, GV['Q'], 0.0, n]
+    for L in GV['L-list']:
+        # Get steady state solution for newtonian flow
+        SS_sol = solver(q=GV['Q'], L=L, linear=False)
+        f = interp1d(SS_sol.x, SS_sol.y[0, :])
 
-        sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8)
-        saved_startup_sols.append(sol.y[:, -1])
+        new_x = np.linspace(0, L, GV['N'])
+        steady_state_newtonian_solution = f(new_x)
 
-        error = np.abs(sol.y[:, -1] - steady_state_newtonian_solution)
-        av_error = np.mean(error)
-        saved_error_arrays.append(error)
+        saved_startup_sols = []
+        saved_error_arrays = []
+        saved_ts = []
 
-    print(f"Min t found! {t}")
-    np.save('../data/min_t/min_t.npy', t)
+        av_error = 1
+        while av_error > tolerance:
+            t += 10
+            print(f"Error is larger than tolerance: {np.round(av_error, 5)}, t is now {t}")
+            saved_ts.append(t)
+            n = 1.0
+            t_span = (0, t)
+            dx = L/GV['N']
+            h_initial = np.ones(GV['N']) * GV['h0']
+            args = [PL_DP_make_step, dx, None, GV['Q'], 0.0, n]
 
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(15, 10))
+            sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8)
+            saved_startup_sols.append(sol.y[:, -1])
 
-    ax[0].plot(GV['x'], steady_state_newtonian_solution, label="Steady State", linestyle='--', color='black')
-    [ax[0].plot(GV['x'], saved_startup_sols[i], label=f"$t={saved_ts[i]}$") for i in range(len(saved_ts))]
-    [ax[1].semilogy(GV['x'], saved_error_arrays[i], label=f"$t={saved_ts[i]}$") for i in range(len(saved_ts))]
+            error = np.abs(sol.y[:, -1] - steady_state_newtonian_solution)
+            av_error = np.mean(error)
+            saved_error_arrays.append(error)
 
-    ax[0].legend()
-    ax[1].legend()
+        print(f"Min t found! | L = {L} | t = {t} |\n")
+        t_list[f'{L}'] = t
 
-    ax[0].grid(True)
-    ax[1].grid(True)
-
-    ax[0].set_title("Plot showing the films at varying time-steps", fontsize=14)
-    ax[1].set_title("Plot showing the error between startup-flow and steady state\n at varying time-steps", fontsize=14)
-    ax[0].set_xlabel("Length $(x)$")
-    ax[1].set_xlabel("Length $(x)$")
-    ax[0].set_ylabel("Film Height $(h)$")
-    ax[1].set_ylabel("Abs Error")
-
-    fig.suptitle(f"Figure showing a thin film evolving at different time scales,\ncompared with the steady state solution. Error < {tolerance} at $t={t}$", fontsize=14)
-
-    fig.savefig('film_error_plot.png')
-
+    file = '../data/min_t/min_ts.json'
+    with open(file, 'w') as f:
+        json.dump(t_list, f)
 
