@@ -42,4 +42,4 @@ plt.ylabel("Height (h)")
 plt.legend()
 plt.show()
 
-# fig.savefig("finite-vol-images/failed/initial.png")
+# fig.savefig("finite_vol_images/failed/initial.png")

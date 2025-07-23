@@ -6,12 +6,22 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import solve_bvp
+import json
+import os
 
-# Define Hyperparameters
-N = 10_000                                       # Number of grid points
-L = 10.0                                        # Length of solid
-Q = 0.7
-h_0 = 1.0
+current_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+
+try:
+    with open(project_root + '/glob_var/global_variables.json') as f:
+        GV = json.load(f)
+except FileNotFoundError:
+    print("Global variables json not found!")
+
+N = GV['N']
+L = GV['L']
+Q = GV['Q']
+h_0 = GV['h0']
 
 # Define Functions
 def ODE(x, y):
@@ -36,6 +46,7 @@ def solver():
     y = np.zeros((3, x.size))
     y[0] = h_0
     solution = solve_bvp(ODE, bc, x, y)
+    print(solution.y[0, :].shape)
     return solution
 
 def plot_solution(solution):
