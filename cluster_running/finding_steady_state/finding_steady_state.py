@@ -7,7 +7,7 @@ from scipy.interpolate import interp1d
 
 from newtonian_thin_film_solve.individual_files.steady_state_central_differences import solver
 from glob_var.FVM.FVM_RHS import FVM_RHS
-from non_newtonian_thin_film_solve.individual_files.power_law_dp import PL_DP_make_step
+from non_newtonian_thin_film_solve.individual_files.power_law_dp import make_step as PL_DP_make_step
 
 current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
