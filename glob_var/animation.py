@@ -22,7 +22,9 @@ class Animation:
         plot2 = [(line, space, time),]
     """
 
-    def __init__(self, num_rows:int, num_cols:int, fig_size:tuple, x:np.ndarray, data:list, num_frames:int, fig_details:dict):
+    def __init__(self, fig_size:tuple, x:np.ndarray, data:list, num_frames:int,
+                 fig_details:dict, num_rows:int=1, num_cols:int=1,):
+
         self.animation = None
         self.num_rows = num_rows
         self.num_cols = num_cols
