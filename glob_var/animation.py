@@ -22,8 +22,8 @@ class Animation:
         plot2 = [(space, time),]
     """
 
-    def __init__(self, num_rows:int, num_cols:int, fig_size:tuple, x:np.ndarray, data:list, fig_details:dict,
-                 min_timestep:int):
+    def __init__(self, fig_size:tuple, x:np.ndarray, data:list, fig_details:dict,
+                 min_timestep:int, num_rows:int=1, num_cols:int=1):
         self.animation = None
         self.num_rows = num_rows
         self.num_cols = num_cols
@@ -40,6 +40,7 @@ class Animation:
         self.ax = np.array(self.ax).flatten()
         self.anim_plot = []
 
+
         for i, PLOT in enumerate(self.ax):
             self.anim_plot.append(PLOT.plot([], [])[0])
 
@@ -55,6 +56,7 @@ class Animation:
             if fig_details['grid'][i]:
                 PLOT.grid(True)
 
+        self.fig.tight_layout()
 
     def update_data(self, frame):
         plot_num = 0

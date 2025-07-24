@@ -48,7 +48,7 @@ def solver(q:float, L:int, linear:bool):
     x = np.linspace(0, L, GV['N'])
     y = np.zeros((3, x.size))
     y[0] = GV['h0']
-    solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y)
+    solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y, max_nodes=GV['N'])
     return solution
 
 def plot_solution(solution, q, axes=None):
