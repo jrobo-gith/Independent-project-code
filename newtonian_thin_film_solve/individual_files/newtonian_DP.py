@@ -21,7 +21,7 @@ def make_step(h, i, args):
     for BCs at the end.
     """
 
-    _, dx, pwr, Q, A, n = args
+    _, dx, pwr, Q, A, n, _ = args
 
     Dx = 1 / dx ** 3
     try:
@@ -42,7 +42,7 @@ def make_step(h, i, args):
 
 if __name__ == '__main__':
     A = 0.13
-    args = [make_step, GV['dx'], 3, GV['Q'], A, None]
+    args = [make_step, GV['dx'], 3, GV['Q'], A, None, False]
     h_initial = np.ones(GV['N']) * GV['h0']
     min_t = GV['t-span'][f"{GV['L']}"]
     t_span = (0, min_t)

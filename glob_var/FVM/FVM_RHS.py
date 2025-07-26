@@ -18,7 +18,7 @@ def FVM_RHS(t: float, h: np.ndarray, args: tuple) -> np.ndarray:
 
     N = GV['N']
 
-    make_step, dx, pwr, Q, _, n = args
+    make_step, dx, pwr, Q, _, n, _ = args
 
     h = h.copy()
     dhdt = np.zeros_like(h)

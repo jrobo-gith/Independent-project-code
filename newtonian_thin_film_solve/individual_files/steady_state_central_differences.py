@@ -18,10 +18,6 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
-# N = GV['N']
-# Q = GV['Q']
-# h_0 = GV['h0']
-
 # Define Functions
 def ODE(x, y, pwr, Q):
     """
@@ -35,7 +31,7 @@ def bc(x_zero, x_L, Q):
     """
     Boundary conditions for the BVP to show the height at each boundary and flux at x=0.
     """
-    return np.array([x_zero[0]-1, x_L[2], x_L[0]-Q])
+    return np.array([x_zero[0]-1, x_L[1], x_L[0]-Q])
 
 def solver(q:float, L:int, linear:bool):
     """
@@ -48,7 +44,7 @@ def solver(q:float, L:int, linear:bool):
     x = np.linspace(0, L, GV['N'])
     y = np.zeros((3, x.size))
     y[0] = GV['h0']
-    solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y, max_nodes=GV['N'])
+    solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y)
     return solution
 
 def plot_solution(solution, q, axes=None):
@@ -62,6 +58,7 @@ def plot_solution(solution, q, axes=None):
     axes.grid(True)
     axes.set_xlabel('Surface Length $(x)$')
     axes.set_ylabel('Film Height $(y)$')
+    fig.show()
 
 # Run everything in main
 def main():

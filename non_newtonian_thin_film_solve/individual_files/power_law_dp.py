@@ -15,6 +15,7 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
+
 def make_step(h, i, args):
     """
     (Try, except)'s are for the BCs, as q_minus won't be computable for BCs at the start and q_plus won't be computable
@@ -22,13 +23,16 @@ def make_step(h, i, args):
     The bool 'print_except' is for making sure anything inside the for loop is not displaying a 0.
     """
 
-    _, dx, pwr, Q, A, n = args
+    _, dx, pwr, Q, A, n, linear = args
 
     DX = 1/dx**3
 
     try:
         disjoining_pressure_term = 3 * A * (((h[i+1]+h[i])/2)**-4) * ((h[i+1]-h[i])/dx)
-        non_linear_h = (0.5 * (h[i] + h[i+1]))**((2*n + 1)/n)
+        if linear:
+            non_linear_h = 1
+        else:
+            non_linear_h = (0.5 * (h[i] + h[i+1]))**((2*n + 1)/n)
         third_order = abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term) ** (1 / n)
         third_order_sign = np.sign(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term)
         advection_term = h[i]
@@ -40,7 +44,10 @@ def make_step(h, i, args):
 
     try:
         disjoining_pressure_term = 3 * A * (((h[i] + h[i-1])/2)**-4) * ((h[i] - h[i-1]) / dx)
-        non_linear_h = (0.5 * (h[i] + h[i-1])) ** ((2*n+1)/n)
+        if linear:
+            non_linear_h = 1
+        else:
+            non_linear_h = (0.5 * (h[i] + h[i-1])) ** ((2*n+1)/n)
         third_order = abs(DX * (-h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1]) + disjoining_pressure_term) ** (1 / n)
         third_order_sign = np.sign(DX * (-h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1]) + disjoining_pressure_term)
         advection_term = h[i-1]
@@ -57,7 +64,7 @@ if __name__ == '__main__':
     h_initial = np.ones(GV['N']) * GV['h0']
     min_t = GV['t-span'][f"{GV['L']}"]
     t_span = (0, min_t)
-    args = [make_step, GV['dx'], None, GV['Q'], 0.1, n]
+    args = [make_step, GV['dx'], None, GV['Q'], 0.05, n, False]
 
     sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8)
 
