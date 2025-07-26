@@ -9,6 +9,6 @@ These are the rough steps to complete the project; to aquire the data needed to 
   <li>Steady state non-Newtonian flow without disjoing pressure</li>
   <li>Startup flow for various non-Newtonian rheologies without disjoining pressure :white_check_mark:</li>
   <li>Steady state non-Newtonian flow for various rheologies with disjoining pressure</li>
-  <li>Startup flow for various non-Newtonian rheologies with disjoining pressure</li>
+  <li>Startup flow for various non-Newtonian rheologies with disjoining pressure :white_check_mark:</li>
 </ul>
 
