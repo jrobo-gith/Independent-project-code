@@ -23,7 +23,7 @@ class Animation:
     """
 
     def __init__(self, fig_size:tuple, x:np.ndarray, data:list, fig_details:dict,
-                 min_timestep:int, num_rows:int=1, num_cols:int=1):
+                 min_timestep:int, interval:int, num_rows:int=1, num_cols:int=1):
         self.animation = None
         self.num_rows = num_rows
         self.num_cols = num_cols
@@ -32,6 +32,9 @@ class Animation:
         self.data = data
         self.fig_details = fig_details
         self.min_timestep = min_timestep
+        self.interval = interval
+
+        self.intenated_frame = 0
 
         # Initialise figure
         self.fig, self.ax = plt.subplots(nrows=self.num_rows, ncols=self.num_cols, figsize=self.fig_size)
@@ -44,17 +47,24 @@ class Animation:
         for i, PLOT in enumerate(self.ax):
             self.anim_plot.append(PLOT.plot([], [])[0])
 
-            # Add plot details
-            PLOT.set_xlim(fig_details['x-lim'])
-            PLOT.set_ylim(fig_details['y-lim'])
-            PLOT.set_title(fig_details['title'][i])
-            PLOT.set_xlabel(fig_details['x-label'][i])
-            PLOT.set_ylabel(fig_details['y-label'][i])
+            # Add plot details if given
+            try: PLOT.set_xlim(fig_details['x-lim'])
+            except KeyError: pass
+            try: PLOT.set_ylim(fig_details['y-lim'])
+            except KeyError: pass
+            try: PLOT.set_title(fig_details['title'][i])
+            except KeyError: pass
+            try: PLOT.set_xlabel(fig_details['x-label'][i])
+            except KeyError: pass
+            try: PLOT.set_ylabel(fig_details['y-label'][i])
+            except KeyError: pass
 
-            if fig_details['legend'][i]:
-                PLOT.legend()
-            if fig_details['grid'][i]:
-                PLOT.grid(True)
+            try:
+                if fig_details['legend'][i]: PLOT.legend()
+            except KeyError: pass
+            try:
+                if fig_details['grid'][i]: PLOT.grid(True)
+            except KeyError: pass
 
         self.fig.tight_layout()
 
@@ -71,7 +81,8 @@ class Animation:
                 old_time = np.linspace(0, 1, active_data.shape[2])
                 f = interp1d(old_time, active_data, axis=2)
                 interpolated_data = f(time_of_min)
-                [active_plot.set_data(self.x, interpolated_data[k, :, frame]) for k in range(interpolated_data.shape[0])]
+                [active_plot.set_data(self.x, interpolated_data[k, :, min(self.intenated_frame, self.min_timestep-1)]) for k in range(interpolated_data.shape[0])]
+                self.intenated_frame += 5
                 plot_num += 1
 
     def instantiate_animation(self):
@@ -79,7 +90,7 @@ class Animation:
                     fig = self.fig,
                     func = self.update_data,
                     frames = self.min_timestep,
-                    interval = 10,
+                    interval = self.interval,
                 )
 
     def save_animation(self, directory):

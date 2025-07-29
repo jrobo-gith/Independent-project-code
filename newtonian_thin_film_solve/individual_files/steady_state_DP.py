@@ -29,9 +29,9 @@ def bc(x_zero, x_L, Q):
     """
     Boundary conditions for the BVP to show the height at each boundary and flux at x=0.
     """
-    return np.array([x_zero[0]-1, x_L[1], x_L[0]-Q])
+    return np.array([x_zero[0]-GV['h0'], x_L[1], x_L[0]-Q])
 
-def solver(q:float, L:int):
+def solver(q:float, L:int, A):
     """
     Uses scipy integrate to solve the boundary value problem
     """
@@ -39,7 +39,7 @@ def solver(q:float, L:int):
     x = np.linspace(0, L, GV['N'])
     y = np.zeros((3, x.size))
     y[0] = GV['h0']
-    solution = solve_bvp(lambda x,y: ODE(x, y, Q=q, pwr=3, A=0.16), lambda x,y: bc(x, y, Q=q), x, y)
+    solution = solve_bvp(lambda x,y: ODE(x, y, Q=q, pwr=3, A=A), lambda x,y: bc(x, y, Q=q), x, y)
     return solution
 
 def plot_solution(solution, q, axes=None):
@@ -60,7 +60,7 @@ def main():
     """
     Main function encapsulating all running code
     """
-    solution = solver(GV['Q'], GV['L'])
+    solution = solver(GV['Q'], GV['L'], )
     plot_solution(solution, GV['Q'])
 
 if __name__ == "__main__":
