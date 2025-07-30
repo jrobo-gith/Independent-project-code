@@ -1,10 +1,11 @@
-import numpy as np
-from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import os
 import json
+import jax.numpy as jnp
+import jax
+import diffrax
 
-from glob_var.FVM.FVM_RHS import FVM_RHS
+from glob_var.FVM.FVM_RHS_JAX import ThinFilm
 from glob_var.FVM.stop_events import unstable, steady_state
 
 current_dir = os.path.dirname(__file__)
@@ -35,7 +36,7 @@ def make_step(h, i, args):
         else:
             non_linear_h = (0.5 * (h[i] + h[i+1]))**((2*n + 1)/n)
         third_order = abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term) ** (1 / n)
-        third_order_sign = np.sign(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term)
+        third_order_sign = jnp.sign(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term)
         advection_term = h[i]
 
         q_plus = non_linear_h * third_order_sign * third_order + advection_term
@@ -50,7 +51,7 @@ def make_step(h, i, args):
         else:
             non_linear_h = (0.5 * (h[i] + h[i-1])) ** ((2*n+1)/n)
         third_order = abs(DX * (-h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1]) + disjoining_pressure_term) ** (1 / n)
-        third_order_sign = np.sign(DX * (-h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1]) + disjoining_pressure_term)
+        third_order_sign = jnp.sign(DX * (-h[i-2] + 3*h[i-1] - 3*h[i] + h[i+1]) + disjoining_pressure_term)
         advection_term = h[i-1]
 
         q_minus = non_linear_h * third_order_sign * third_order + advection_term
@@ -60,27 +61,24 @@ def make_step(h, i, args):
 
     return q_plus, q_minus
 
-if __name__ == '__main__':
-    n = 1.0
+@jax.jit
+def main():
     A = 0.0
-    Q = 0.95
-    h_initial = np.ones(GV['N']) * GV['h0']
-    t_span = GV['t-span']
-    args = [make_step, GV['dx'], None, Q, A, n, False, GV['N']]
+    n = 1.0
+    args = (make_step, GV['dx'], None, GV['Q'], A, n, False, GV['N'])
+    thin_film = ThinFilm()
+    term = diffrax.ODETerm(thin_film)
+    t0 = 0.0
+    t1 = 1_00
+    y0 = jnp.ones(GV['N']) * GV['h0']
+    dt0 = 0.0002
+    solver = diffrax.Kvaerno5()
+    # saveat = diffrax.SaveAt(ts=jnp.array([0.0, 1e-4, 1e-3, 1e-2, 1e-1, 1e0, 1e1, 1e2]))
+    stepsize_controller = diffrax.PIDController(rtol=1e-8, atol=1e-8)
+    event = diffrax.Event(unstable, steady_state)
+    sol = diffrax.diffeqsolve(term, solver, t0, t1, dt0, y0, stepsize_controller=stepsize_controller,
+                              args=args)
+    return sol
 
-    unstable.terminal = True
-    steady_state.terminal = True
-    sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8,
-                    events=[unstable, steady_state])
-
-    print(sol.status)
-    print(sol.success)
-    print(sol.message)
-    print(sol.t[-1])
-
-    plt.plot(GV['x'], sol.y[:, -1])
-    plt.title(f"Graph showing startup-flow solve of Newtonian fluid\nwith $Q={GV['Q']}$, $t={t_span[1]}$, $n={n}$")
-    plt.grid(True)
-    plt.xlabel('Surface Length $(x)$')
-    plt.ylabel('Film Height $(y)$')
-    plt.show()
+s = main()
+print(s)

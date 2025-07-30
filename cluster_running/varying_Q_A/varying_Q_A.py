@@ -22,9 +22,9 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
-resolution = 1
-Qs = np.linspace(0.9, 0.95, resolution)
-As = np.logspace(-9, -8, resolution)
+resolution = 5
+Qs = np.linspace(0.1, 0.95, resolution)
+As = np.linspace(0, 0.2, resolution)
 
 def heatmap(n):
 
@@ -47,13 +47,17 @@ def heatmap(n):
 
 if __name__ == "__main__":
     num_threads = 3         # Number of threads needed
-    ns = [1.0, 1.0, 1.0]  # Rheologies to be tested
+    ns = [0.8, 1.0, 1.2]  # Rheologies to be tested
     data = np.zeros((len(ns), len(As), len(Qs), GV['N']))
     table = np.zeros((len(ns), len(As), len(Qs)))
     with mp.Pool(processes=num_threads) as pool:
-         stuff1, stuff2, stuff3 = pool.map(heatmap, ns)
+         thinning, newtonian, thickening = pool.map(heatmap, ns)
 
-    data1, table1 = stuff1
-    data2, table2 = stuff2
-    data3, table3 = stuff3
-    print(table1, table2, table3)
+    thinning_data, thinning_table = thinning
+    newtonian_data, newtonian_table = newtonian
+    thickening_data, thickening_table = thickening
+
+    save_path = os.path.join("..", "..", "data", "test_data")
+    np.save(save_path + "thinning_data.npy", thinning_data)
+    np.save(save_path + "newtonian_.npy", newtonian_data)
+    np.save(save_path + "thickening_data.npy", thickening_data)

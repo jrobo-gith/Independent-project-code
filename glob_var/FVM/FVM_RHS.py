@@ -16,9 +16,7 @@ def FVM_RHS(t: float, h: np.ndarray, args: tuple) -> np.ndarray:
     RHS of equation, made for scipy's solve_ivp function that takes care of this stiff fourth order PDE.
     """
 
-    N = GV['N']
-
-    make_step, dx, pwr, Q, _, n, _ = args
+    make_step, dx, pwr, Q, _, n, _, N = args
 
     h = h.copy()
     dhdt = np.zeros_like(h)
