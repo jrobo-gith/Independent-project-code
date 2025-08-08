@@ -1,21 +1,35 @@
 import numpy as np
-from scipy.integrate import solve_ivp
-import matplotlib.pyplot as plt
-import os
-import json
 
-from glob_var.FVM.FVM_RHS import FVM_RHS
-from glob_var.FVM.stop_events import unstable, steady_state
+def FVM_RHS(t: float, h: np.ndarray, args: tuple) -> np.ndarray:
+    """
+    RHS of equation, made for scipy's solve_ivp function that takes care of this stiff fourth order PDE.
+    """
 
-current_dir = os.path.dirname(__file__)
-project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+    make_step, dx, pwr, Q, _, n, _, N = args
 
-try:
-    with open(project_root + '/glob_var/global_variables.json') as f:
-        GV = json.load(f)
-except FileNotFoundError:
-    print("Global variables json not found!")
+    h = h.copy()
+    dhdt = np.zeros_like(h)
 
+    # i = 0
+    h[0] = 1
+
+    # i = 1
+    q_plus, q_minus = make_step(h=h, i=1, args=args)
+    dhdt[1] = - (q_plus - Q) / dx
+
+    # i = N - 2
+    q_plus, q_minus = make_step(h=h, i=N - 2, args=args)
+    dhdt[N - 2] = - (h[N - 2] - q_minus) / dx
+
+    # i = N - 1
+    h[N - 1] = h[N - 2]
+    dhdt[N - 1] = dhdt[N - 2]
+
+    for i in range(2, N - 2):
+        q_plus, q_minus = make_step(h=h, i=i, args=args)
+        dhdt[i] = -(q_plus - q_minus) / dx
+
+    return dhdt
 
 def make_step(h, i, args):
     """
@@ -59,30 +73,3 @@ def make_step(h, i, args):
         q_minus = 0
 
     return q_plus, q_minus
-
-if __name__ == '__main__':
-    n = 1.0
-    A = 0.0
-    Q = 0.95
-    h_initial = np.ones(GV['N']) * GV['h0']
-    # t_span = GV['t-span']
-    args = [make_step, GV['dx'], None, Q, A, n, True, GV['N']]
-
-    t_span = (0, 10)
-
-    unstable.terminal = True
-    steady_state.terminal = True
-    sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8,
-                    events=[unstable, steady_state])
-
-    print(sol.status)
-    print(sol.success)
-    print(sol.message)
-    print(sol.t[-1])
-
-    plt.plot(GV['x'], sol.y[:, -1])
-    plt.title(f"Graph showing startup-flow solve of Newtonian fluid\nwith $Q={GV['Q']}$, $t={t_span[1]}$, $n={n}$")
-    plt.grid(True)
-    plt.xlabel('Surface Length $(x)$')
-    plt.ylabel('Film Height $(y)$')
-    plt.show()

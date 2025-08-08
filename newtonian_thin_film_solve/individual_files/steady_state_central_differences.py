@@ -41,7 +41,7 @@ def solver(q:float, L:int, linear:bool):
         pwr = 0
     else:
         pwr = 3
-    x = np.linspace(0, L, GV['N'])
+    x = np.linspace(0, L, 10_000)
     y = np.zeros((3, x.size))
     y[0] = GV['h0']
     solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y)
@@ -58,7 +58,8 @@ def plot_solution(solution, q, axes=None):
     axes.grid(True)
     axes.set_xlabel('Surface Length $(x)$')
     axes.set_ylabel('Film Height $(y)$')
-    fig.show()
+    if __name__ == "__main__":
+        fig.show()
 
 # Run everything in main
 def main():

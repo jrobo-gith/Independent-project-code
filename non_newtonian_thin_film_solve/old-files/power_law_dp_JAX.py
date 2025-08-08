@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import os
 import json
 import jax.numpy as jnp

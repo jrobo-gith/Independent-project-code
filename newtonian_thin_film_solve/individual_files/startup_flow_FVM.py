@@ -4,7 +4,7 @@ def make_step(h, i, args):
     for BCs at the end.
     """
 
-    _, dx, pwr, Q, _, n = args
+    _, dx, pwr, Q, _, n, _, _ = args
 
     Dx = 1 / dx ** 3
     try:

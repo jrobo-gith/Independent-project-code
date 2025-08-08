@@ -23,13 +23,16 @@ def make_step(h, i, args):
     The bool 'print_except' is for making sure anything inside the for loop is not displaying a 0.
     """
 
-    _, dx, pwr, Q, _, n = args
+    _, dx, pwr, Q, _, n, linear, _ = args
 
     DX = 1 / dx ** 3
     epsilon = 0
 
     try:
-        non_linear_h = (0.5 * (h[i] + h[i + 1])) ** ((2 * n + 1) / n) + epsilon
+        if linear:
+            non_linear_h = 1.0
+        else:
+            non_linear_h = (0.5 * (h[i] + h[i + 1])) ** ((2 * n + 1) / n) + epsilon
         third_order = abs(-h[i - 1] + 3 * h[i] - 3 * h[i + 1] + h[i + 2] + epsilon) ** (1 / n)
         third_order_sign = np.sign(-h[i - 1] + 3 * h[i] - 3 * h[i + 1] + h[i + 2])
         advection_term = h[i]
@@ -40,7 +43,10 @@ def make_step(h, i, args):
         q_plus = 0
 
     try:
-        non_linear_h = (0.5 * (h[i] + h[i - 1])) ** ((2 * n + 1) / n) + epsilon
+        if linear:
+            non_linear_h = 1.0
+        else:
+            non_linear_h = (0.5 * (h[i] + h[i - 1])) ** ((2 * n + 1) / n) + epsilon
         third_order = abs(-h[i - 2] + 3 * h[i - 1] - 3 * h[i] + h[i + 1] + epsilon) ** (1 / n)
         third_order_sign = np.sign(-h[i - 2] + 3 * h[i - 1] - 3 * h[i] + h[i + 1])
         advection_term = h[i - 1]
