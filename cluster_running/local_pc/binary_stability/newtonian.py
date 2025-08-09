@@ -3,7 +3,7 @@ import json
 from scipy.integrate import solve_ivp
 from glob_var.FVM.FVM_RHS import FVM_RHS
 from glob_var.FVM.stop_events import unstable, steady_state
-from
+
 
 with open("global_variables.json") as f:
     GV = json.load(f)

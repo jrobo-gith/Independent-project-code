@@ -65,10 +65,9 @@ if __name__ == '__main__':
     A = 0.0
     Q = 0.95
     h_initial = np.ones(GV['N']) * GV['h0']
-    # t_span = GV['t-span']
-    args = [make_step, GV['dx'], None, Q, A, n, True, GV['N']]
-
-    t_span = (0, 10)
+    h_initial[0] = GV['h0']
+    t_span = GV['t-span']
+    args = [make_step, GV['dx'], None, Q, A, n, False, GV['N']]
 
     unstable.terminal = True
     steady_state.terminal = True

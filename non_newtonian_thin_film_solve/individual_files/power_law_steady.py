@@ -46,8 +46,8 @@ def plot_solution(solution, q, axes=None):
     Plots the solution to the numerically solved thin film equation, adds a diagram of the extruder also
     """
     if axes is None:
-        fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 5))
-    axes.plot(solution.x, solution.y[0], color='g', linestyle='-', linewidth=2)
+        fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
+    axes.plot(solution.x, solution.y[0], color='g', linestyle='-', linewidth=4)
     axes.set_title(f"Solution to BVP (Q={q}) \n $h(x=0)={GV['h0']}$")
     axes.grid(True)
     axes.set_xlabel('Surface Length $(x)$')
