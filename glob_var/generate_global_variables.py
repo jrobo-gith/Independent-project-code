@@ -23,7 +23,8 @@ GV = {
     'colors': ['red', 'green',
                'blue', 'black',
                'purple', 'cyan',
-               'orange', 'pink']            # List of colors for plotting
+               'orange', 'pink'],            # List of colors for plotting
+    'cmap': 'cool'
 }
 GV['dx'] = GV['L'] / GV['N']
 GV['large-dx'] = GV['large-L'] / GV['large-N']
