@@ -36,18 +36,36 @@ print("Calculating startup flow...")
 linear_solution_Q = []  # Store linear solutions varying Q
 non_linear_solution_Q = []  # Store non-linear solutions varying Q
 
+linear_times = []
+non_linear_times = []
+
+linear_temporal_errors = []
+non_linear_temporal_errors = []
+
 for i in range(len(GV['Q-list'])):
     h_initial = np.ones(GV['N']) * GV['h0']
 
     args = [newt_make_step, GV['dx'], 0, GV['Q-list'][i], None, 1.0, None, GV['N']]
-    linear_solution_Q.append(
-        solve_ivp(fun=FVM_RHS, args=(args,), y0=h_initial, t_span=t_span, method='BDF', rtol=1e-6, atol=1e-8,
-                  events=[unstable, steady_state]).y[:, -1])
+    l_sol = solve_ivp(fun=FVM_RHS, args=(args,), y0=h_initial, t_span=t_span, method='BDF', rtol=1e-6, atol=1e-8,
+                  events=[unstable, steady_state])
+    linear_solution_Q.append(l_sol.y[:, -1])
+    linear_times.append(l_sol.t)
 
     args = [newt_make_step, GV['dx'], 3, GV['Q-list'][i], None, 1.0, None, GV['N']]
-    non_linear_solution_Q.append(
-        solve_ivp(fun=FVM_RHS, args=(args,), y0=h_initial, t_span=t_span, method='BDF', rtol=1e-6, atol=1e-8,
-                  events=[unstable, steady_state]).y[:, -1])
+    nl_sol = solve_ivp(fun=FVM_RHS, args=(args,), y0=h_initial, t_span=t_span, method='BDF', rtol=1e-6, atol=1e-8,
+                  events=[unstable, steady_state])
+    non_linear_solution_Q.append(nl_sol.y[:, -1])
+    non_linear_times.append(nl_sol.t)
+
+    ## Compute temporal error
+    lte = []
+    nlte = []
+    for j in range(l_sol.y.shape[1]):
+        lte.append(mod(steady_state=linear_solution_Q_steady[i], startup_flow=l_sol.y[:, j], scalar=True))
+    for j in range(nl_sol.y.shape[1]):
+        nlte.append(mod(steady_state=non_linear_solution_Q_steady[i], startup_flow=nl_sol.y[:, j], scalar=True))
+    linear_temporal_errors.append(lte)
+    non_linear_temporal_errors.append(nlte)
 
 L_list = [5, 20, 40, 80]
 
@@ -78,16 +96,17 @@ for i in range(len(GV['Q-list'])):
 ## PLOT EVERYTHING
 print("Plotting...")
 
-fig = plt.figure(figsize=(20, 10))
+fig = plt.figure(figsize=(10, 15))
 
-gs = gridspec.GridSpec(2, 4, figure=fig, width_ratios=[1.3, 1, 0.85, 0.85])
-large_left = fig.add_subplot(gs[:, 0])
-error = fig.add_subplot(gs[:, 1])
+gs = gridspec.GridSpec(4, 2, figure=fig, height_ratios=[1.25, 1.25, 0.75, 0.75])
+large_left = fig.add_subplot(gs[0, :])
+temporal_error = fig.add_subplot(gs[1, 0])
+error = fig.add_subplot(gs[1, 1])
 
-top_left = fig.add_subplot(gs[0, 2])
-top_right = fig.add_subplot(gs[0, 3])
-bottom_left = fig.add_subplot(gs[1, 2])
-bottom_right = fig.add_subplot(gs[1, 3])
+top_left = fig.add_subplot(gs[2, 0])
+top_right = fig.add_subplot(gs[2, 1])
+bottom_left = fig.add_subplot(gs[3, 0])
+bottom_right = fig.add_subplot(gs[3, 1])
 
 [large_left.plot(GV['x'], linear_solution_Q[i], color=GV['colors'][i], linestyle='--') for i in range(len(GV['Q-list']))]
 [large_left.plot(GV['x'], non_linear_solution_Q[i], color=GV['colors'][i], label=f"$Q={GV['Q-list'][i]}$", linestyle='-') for i in range(len(GV['Q-list']))]
@@ -103,6 +122,7 @@ top_left.plot(np.linspace(0, L_list[0], GV['N']), linear_solution[0], linestyle=
 top_left.plot(np.linspace(0, L_list[0], GV['N']), non_linear_solution[0], linestyle='-', color='k')
 top_left.grid(True)
 top_left.set_ylim(0, 1)
+top_left.set_ylabel("Film Height $(y)$", fontsize=14)
 
 top_right.set_title(f"$L={L_list[1]}$", fontsize=16)
 top_right.plot(np.linspace(0, L_list[1], GV['N']), linear_solution[1], linestyle='--', color='k')
@@ -115,21 +135,32 @@ bottom_left.plot(np.linspace(0, L_list[2], GV['N']), linear_solution[2], linesty
 bottom_left.plot(np.linspace(0, L_list[2], GV['N']), non_linear_solution[2], linestyle='-', color='k')
 bottom_left.grid(True)
 bottom_left.set_ylim(0, 1)
+bottom_left.set_ylabel("Film Height $(y)$", fontsize=14)
+bottom_left.set_xlabel("Surface Length $(x)$", fontsize=14)
 
 bottom_right.set_title(f"$L={L_list[3]}$", fontsize=16)
 bottom_right.plot(np.linspace(0, L_list[3], GV['N']), linear_solution[3], linestyle='--', color='k')
 bottom_right.plot(np.linspace(0, L_list[3], GV['N']), non_linear_solution[3], linestyle='-', color='k')
 bottom_right.grid(True)
 bottom_right.set_ylim(0, 1)
+bottom_right.set_xlabel("Surface Length $(x)$", fontsize=14)
 
-[error.semilogy(np.linspace(0, 16, 10_000), linear_error_Q[i], linestyle='--', linewidth=2,  color=GV['colors'][i]) for i in range(len(linear_error_Q))]
-[error.semilogy(np.linspace(0, 16, 10_000), non_linear_error_Q[i], linestyle='-', label=f"$Q={GV['Q-list'][i]}$", linewidth=2, color=GV['colors'][i]) for i in range(len(non_linear_error_Q))]
+[temporal_error.loglog(linear_times[i], linear_temporal_errors[i], linewidth=1.5, linestyle='--', color=GV['colors'][i]) for i in range(len(GV['Q-list']))]
+[temporal_error.loglog(non_linear_times[i], non_linear_temporal_errors[i], linewidth=1.5, color=GV['colors'][i], label=f"$Q={GV['Q-list'][i]}$") for i in range(len(GV['Q-list']))]
+temporal_error.set_xlim(1e-0, 1e2)
+temporal_error.grid(True)
+temporal_error.legend()
+temporal_error.set_xlabel("Time steps $(\Delta t)$", fontsize=14)
+temporal_error.set_ylabel("Absolute Error", fontsize=14)
+temporal_error.set_title("Error of model varying volume flux over time", fontsize=16)
+
+[error.semilogy(np.linspace(0, 16, 10_000), linear_error_Q[i], linestyle='--', linewidth=1.5,  color=GV['colors'][i]) for i in range(len(linear_error_Q))]
+[error.semilogy(np.linspace(0, 16, 10_000), non_linear_error_Q[i], linestyle='-', label=f"$Q={GV['Q-list'][i]}$", linewidth=1.5, color=GV['colors'][i]) for i in range(len(non_linear_error_Q))]
 error.grid(True)
 error.legend()
 error.set_ylabel("Absolute error", fontsize=14)
 error.set_xlabel("Surface Length $(x)$", fontsize=14)
 error.set_title("Absolute error against\nsteady state with varying Q", fontsize=16)
 
-fig.suptitle("Validation graph varying flux Q with fixed L (left) the error against the steady state model (middle)\nand length scale L with fixed Q (right)", fontsize=20, y=1.055)
 plt.tight_layout()
 fig.savefig("graphs/newtonian_startup_no_DP.png")

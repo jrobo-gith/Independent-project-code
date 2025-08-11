@@ -47,7 +47,10 @@ thinning = np.load("thinning.npy")
 thickening = np.load("thickening.npy")
 
 newtonian_SS = np.load("../steady_state_all_rheologies/data/newtonian_ss.npy")
+thinning_SS = np.load("../steady_state_all_rheologies/data/thinning_SS.npy")
+thickening_SS = np.load("../steady_state_all_rheologies/data/thickening_SS.npy")
+
 
 plot_deformation(data=newtonian, directory="deformation_newtonian.png", title="Newtonian", steady_states_Q=newtonian_SS, t=39)
-# plot_deformation(data=thinning, directory="deformation_thinning.png", title="Thinning", steady_state=thinning_SS)
-# plot_deformation(data=thickening, directory="deformation_thickening.png", title="Thickening", steady_state=thickening_SS)
+plot_deformation(data=thinning, directory="deformation_thinning.png", title="Thinning", steady_states_Q=thinning_SS, t=40)
+plot_deformation(data=thickening, directory="deformation_thickening.png", title="Thickening", steady_states_Q=thickening_SS, t=29)

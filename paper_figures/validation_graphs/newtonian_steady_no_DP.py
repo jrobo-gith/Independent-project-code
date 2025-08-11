@@ -25,19 +25,19 @@ for L in L_list:
     non_linear_solution_steady.append(bdf_solver_N(q=GV['Q'], L=L, linear=False).y[0])
 
 
-fig = plt.figure(figsize=(20, 10))
+fig = plt.figure(figsize=(10, 15))
 
-gs = gridspec.GridSpec(2, 3, figure=fig, width_ratios=[2, 1, 1])
-large_left = fig.add_subplot(gs[:, 0])
-top_left = fig.add_subplot(gs[0, 1])
-top_right = fig.add_subplot(gs[0, 2])
-bottom_left = fig.add_subplot(gs[1, 1])
-bottom_right = fig.add_subplot(gs[1, 2])
+gs = gridspec.GridSpec(3, 2, figure=fig, height_ratios=[2, 1, 1])
+large_left = fig.add_subplot(gs[0:1, :])
+top_left = fig.add_subplot(gs[1, 0])
+top_right = fig.add_subplot(gs[1, 1])
+bottom_left = fig.add_subplot(gs[2, 0])
+bottom_right = fig.add_subplot(gs[2, 1])
 
 x = np.linspace(0, GV['L'], 10_000)
 
-[large_left.plot(x, linear_solution_Q_steady[i], color=GV['colors'][i], linestyle='--', linewidth=2) for i in range(3, len(GV['Q-list']))]
-[large_left.plot(x, non_linear_solution_Q_steady[i], color=GV['colors'][i], label=f"$Q={GV['Q-list'][i]}$", linestyle='-', linewidth=2) for i in range(3, len(GV['Q-list']))]
+[large_left.plot(x, linear_solution_Q_steady[i], color=GV['colors'][i], linestyle='--', linewidth=2, label=f"$Q={GV['Q-list'][i]}$") for i in range(len(GV['Q-list']))]
+[large_left.plot(x, non_linear_solution_Q_steady[i], color=GV['colors'][i], linestyle='-', linewidth=2) for i in range(3, len(GV['Q-list']))]
 large_left.legend(loc='lower right')
 large_left.grid(True)
 large_left.set_title(f"Complete BVP varying flux Q at surface length $L={GV['L']}$", fontsize=16)
@@ -50,6 +50,7 @@ top_left.plot(np.linspace(0, L_list[0], 10_000), linear_solution_steady[0], line
 top_left.plot(np.linspace(0, L_list[0], 10_000), non_linear_solution_steady[0], linestyle='-', color='k')
 top_left.grid(True)
 top_left.set_ylim(0, 1)
+top_left.set_ylabel("Film Height $(y)$", fontsize=14)
 
 top_right.set_title(f"$L={L_list[1]}$", fontsize=16)
 top_right.plot(np.linspace(0, L_list[1], 10_000), linear_solution_steady[1], linestyle='--', color='k')
@@ -62,12 +63,15 @@ bottom_left.plot(np.linspace(0, L_list[2], 10_000), linear_solution_steady[2], l
 bottom_left.plot(np.linspace(0, L_list[2], 10_000), non_linear_solution_steady[2], linestyle='-', color='k')
 bottom_left.grid(True)
 bottom_left.set_ylim(0, 1)
+bottom_left.set_ylabel("Film Height $(y)$", fontsize=14)
+bottom_left.set_xlabel("Surface Length $(x)$", fontsize=14)
 
 bottom_right.set_title(f"$L={L_list[3]}$", fontsize=16)
 bottom_right.plot(np.linspace(0, L_list[3], 10_000), linear_solution_steady[3], linestyle='--', color='k')
 bottom_right.plot(np.linspace(0, L_list[3], 10_000), non_linear_solution_steady[3], linestyle='-', color='k')
 bottom_right.grid(True)
 bottom_right.set_ylim(0, 1)
+bottom_right.set_xlabel("Surface Length $(x)$", fontsize=14)
 
 fig.suptitle("Validation graph varying flux Q with fixed L (left) and length scale L with fixed Q (right)", fontsize=20, y=1.055)
 plt.tight_layout()
