@@ -23,7 +23,7 @@ class Animation:
     """
 
     def __init__(self, fig_size:tuple, x:np.ndarray, data:list, fig_details:dict,
-                 min_timestep:int, interval:int, num_rows:int=1, num_cols:int=1):
+                 min_timestep:int, interval:int, title_updates:np.ndarray, num_rows:int=1, num_cols:int=1):
         self.animation = None
         self.num_rows = num_rows
         self.num_cols = num_cols
@@ -33,6 +33,7 @@ class Animation:
         self.fig_details = fig_details
         self.min_timestep = min_timestep
         self.interval = interval
+        self.title_updates = title_updates
 
         self.intenated_frame = 0
 
@@ -46,13 +47,14 @@ class Animation:
 
         for i, PLOT in enumerate(self.ax):
             self.anim_plot.append(PLOT.plot([], [])[0])
+            self.title = PLOT.set_title("")
 
             # Add plot details if given
             try: PLOT.set_xlim(fig_details['x-lim'])
             except KeyError: pass
             try: PLOT.set_ylim(fig_details['y-lim'])
             except KeyError: pass
-            try: PLOT.set_title(fig_details['title'][i])
+            try: PLOT.set_title(fig_details['title'][0][i])
             except KeyError: pass
             try: PLOT.set_xlabel(fig_details['x-label'][i])
             except KeyError: pass
@@ -82,6 +84,7 @@ class Animation:
                 f = interp1d(old_time, active_data, axis=2)
                 interpolated_data = f(time_of_min)
                 [active_plot.set_data(self.x, interpolated_data[k, :, min(self.intenated_frame, self.min_timestep-1)]) for k in range(interpolated_data.shape[0])]
+                if self.fig_details['title'][1]:self.title.set_text(self.fig_details['title'][0] + f", $t = {np.round(self.title_updates[frame], 2)}s$")
                 self.intenated_frame += 5
                 plot_num += 1
 

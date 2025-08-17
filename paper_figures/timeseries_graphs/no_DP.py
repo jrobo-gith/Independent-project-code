@@ -9,15 +9,18 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
-newt_sol_y = np.load("data/newt_sol.npy")
-thin_sol_y = np.load("data/thin_sol.npy")
-thic_sol_y = np.load("data/thic_sol.npy")
+newt_sol_y = np.load("../term_tracker/newtonian_collector/sol_y.npy")
+thin_sol_y = np.load("../term_tracker/thinning_collector/sol_y.npy")
+thic_sol_y = np.load("../term_tracker/thickening_collector/sol_y.npy")
 
-newt_sol_t = np.load("data/newt_sol_t.npy")
-thin_sol_t = np.load("data/thin_sol_t.npy")
-thic_sol_t = np.load("data/thic_sol_t.npy")
+newt_sol_t = np.load("../term_tracker/newtonian_collector/T.npy")
+thin_sol_t = np.load("../term_tracker/thinning_collector/T.npy")
+thic_sol_t = np.load("../term_tracker/thickening_collector/T.npy")
+
+print(newt_sol_y.shape, thin_sol_y.shape, thic_sol_y.shape)
 
 max_t = max([newt_sol_t[-1], thin_sol_t[-1], thic_sol_t[-1]])
+print(newt_sol_t[-1], thin_sol_t[-1], thic_sol_t[-1])
 
 c = np.arange(0, max_t)
 norm = mpl.colors.Normalize(vmin=c.min(), vmax=c.max())
@@ -32,7 +35,7 @@ num_intervals = 5
 LW = 2.5
 
 def plot_lines(axis, sol_y, sol_t):
-    step = int(len(sol_t)/num_intervals)
+    step = int(sol_y.shape[1]/num_intervals)
     rgb_step = int(max(sol_t) / num_intervals)
     intermediate_array = sol_y[:, ::step]
     axis.plot(GV['x'], sol_y[:, 0], c=cmap.to_rgba(0.01), linewidth=LW)
@@ -78,5 +81,5 @@ cb.set_label("Time (s)", fontsize=16)
 cb.ax.tick_params(labelsize=14)
 
 fig.suptitle(f"Timeseries graph showing evolution of three rheologies in time", fontsize=18, y=0.92)
-
-fig.savefig("no_DP.png", bbox_inches='tight')
+fig.show()
+# fig.savefig("no_DP.png", bbox_inches='tight')

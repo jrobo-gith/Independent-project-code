@@ -10,16 +10,21 @@ except FileNotFoundError:
     print("Global variables json not found!")
 
 def compute_Z(data):
+    stable = 0
+    unstable = 0
     Z = np.zeros((data.shape[0], data.shape[1]))
     for i in range(data.shape[0]):
         for j in range(data.shape[1]):
             if np.any(data[i, j, :] < 0.05):
                 # Unstable
+                unstable += 1
                 Z[i, j] = 0
             else:
                 # Stable
+                stable += 1
                 Z[i, j] = 1
 
+    print(f"Percentage Stable: {stable / (stable+unstable) * 100:.2f}%")
     return Z
 
 newtonian_data = np.load("newtonian.npy")
@@ -63,4 +68,4 @@ cb = fig.colorbar(cmap, cax=cbar_ax, ticks=np.arange(0, 1.1, 0.1))
 cb.set_label("Stability", fontsize=14)
 cb.ax.tick_params(labelsize=14)
 
-fig.savefig("clumped_heatmap.png", bbox_inches='tight')
+# fig.savefig("clumped_heatmap.png", bbox_inches='tight')

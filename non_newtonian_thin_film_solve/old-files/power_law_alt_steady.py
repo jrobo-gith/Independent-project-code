@@ -50,7 +50,7 @@ def FVM_RHS(h: np.ndarray, args: tuple) -> np.ndarray:
 
 
 args = [make_step, GV['dx'], 3, GV['Q'], None, 1.2, False, GV['N']]
-h_initial = np.ones(GV['N']) * 0.5
+h_initial = np.ones(GV['N']) * 0.8
 h_initial[0] = GV['h0']
 
 sol = root(fun=FVM_RHS, args=(args,), x0=h_initial)

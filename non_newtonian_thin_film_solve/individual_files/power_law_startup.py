@@ -4,6 +4,7 @@ from scipy.integrate import solve_ivp
 
 import os
 import json
+import time
 
 current_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
@@ -15,6 +16,7 @@ except FileNotFoundError:
     print("Global variables json not found!")
 
 from glob_var.FVM.FVM_RHS import FVM_RHS
+from glob_var.FVM.stop_events import unstable, steady_state
 
 def make_step(h, i, args):
     """
@@ -59,20 +61,28 @@ def make_step(h, i, args):
     return q_plus, q_minus
 
 if __name__ == '__main__':
-    n = 0.1
+    n = 1.2
     h_initial = np.ones(GV['N']) * GV['h0']
-    min_t = GV['t-span'][f"{GV['L']}"]
-    t_span = (0, min_t)
-    args = [make_step, GV['dx'], None, GV['Q'], None, n]
+    t_span = GV['t-span']
+    L = GV['L']
+    dx = L/GV['N']
+    args = [make_step, GV['dx'], 3, GV['Q'], None, n, False, GV['N']]
 
-    sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8)
+    steady_state.terminal = True
+    unstable.terminal = True
+
+    start = time.time()
+    sol = solve_ivp(fun=FVM_RHS, y0=h_initial, t_span=t_span, args=(args,), method='BDF', rtol=1e-6, atol=1e-8, events=[steady_state, unstable])
+    end = time.time()
+
+    print(f"Time taken = {end - start:.2f} seconds")
 
     print(sol.status)
     print(sol.success)
     print(sol.message)
 
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 10))
-    ax.plot(GV['x'], sol.y[:, -1], label=f'End, t={t_span[1]}')
+    ax.plot(GV['x'], sol.y[:, -1], label=f'End, t={sol.t[-1]}')
     ax.set_ylim(0, 1)
     ax.grid(True)
     ax.legend()

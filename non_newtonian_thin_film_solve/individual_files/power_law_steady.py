@@ -15,13 +15,13 @@ except FileNotFoundError:
     print("Global variables json not found!")
 
 # Define Functions
-def ODE(x, y, Q, n):
+def ODE(x, y, Q, n, linear=False):
     """
     Split ODE into three first order ODEs, returns the derivative of the vector y linking the ODEs. 'n' represents the
     rheology of the fluid. n < 1.0 is shear thinning, n > 1.0 is shear thickening.
     """
-    dy_3 = ((Q-y[0]) / (y[0]**((2*n+1)/n))**n)
-
+    if linear:  dy_3 = np.sign(Q-y[0]) * ((abs(Q-y[0])**n) / (y[0]))
+    else:       dy_3 = np.sign(Q-y[0]) * ((abs(Q-y[0])**n) / (y[0]**((2*n+1))))
     return np.array([y[1], y[2], dy_3])
 
 def bc(x_zero, x_L, Q):
@@ -30,15 +30,15 @@ def bc(x_zero, x_L, Q):
     """
     return np.array([x_zero[0]-1, x_L[1], x_L[0]-Q])
 
-def solver(q:float, L:int):
+def solver(q:float, L:int, n:float, linear:bool=False):
     """
     Uses scipy integrate to solve the boundary value problem
     """
 
-    x = np.linspace(0, L, GV['N'])
-    y = np.zeros((3, x.size))
+    x = np.linspace(0, L, 1_000_000)
+    y = np.ones((3, x.size))
     y[0] = GV['h0']
-    solution = solve_bvp(lambda x,y: ODE(x, y, Q=q, n=1.0), lambda x,y: bc(x, y, Q=q), x, y)
+    solution = solve_bvp(lambda x,y: ODE(x, y, Q=q, n=n, linear=linear), lambda x,y: bc(x, y, Q=q), x, y, tol=1e-2, max_nodes=4000000000)
     return solution
 
 def plot_solution(solution, q, axes=None):
@@ -59,7 +59,7 @@ def main():
     """
     Main function encapsulating all running code
     """
-    solution = solver(GV['Q'], GV['L'])
+    solution = solver(GV['Q'], GV['L']*2, n=1.2, linear=True)
     plot_solution(solution, GV['Q'])
 
 if __name__ == "__main__":

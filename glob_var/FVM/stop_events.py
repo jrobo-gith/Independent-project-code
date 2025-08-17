@@ -1,4 +1,5 @@
 from glob_var.FVM.FVM_RHS import FVM_RHS
+from glob_var.FVM.FVM_RHS_tracked import make_ode
 import numpy as np
 
 def unstable(t, h, args):
@@ -8,4 +9,9 @@ def unstable(t, h, args):
 def steady_state(t, h, args):
     """Triggers an event when the time derivative is nearly 0, meaning the system has reached a near-steady state"""
     dhdt = FVM_RHS(t, h, args)
-    return np.linalg.norm(dhdt) - 1e-4
+    return np.linalg.norm(dhdt) - 1e-5
+
+def steady_state_tracked(t, h, args):
+    FVM_ODE = make_ode(collector=[[], [], [], [], []])
+    dhdt = FVM_ODE(t, h, args)
+    return np.linalg.norm(dhdt) - 1e-5

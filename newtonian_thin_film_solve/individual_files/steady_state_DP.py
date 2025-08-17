@@ -60,7 +60,7 @@ def main():
     """
     Main function encapsulating all running code
     """
-    solution = solver(GV['Q'], GV['L'], )
+    solution = solver(GV['Q'], GV['L'], A=1.0)
     plot_solution(solution, GV['Q'])
 
 if __name__ == "__main__":

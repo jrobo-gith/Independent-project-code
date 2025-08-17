@@ -10,8 +10,7 @@ GV = {
     'Q': 0.75,                              # Flux at h=0, used when flux isn't being varied,
     't-span': (0, 1_000_000),               # Arbitrarily large such that the ODE reaches a steady state
 
-    'Q-list': [0.1, 0.25,
-               0.5, 0.75,
+    'Q-list': [0.75, 0.8,
                0.9, 0.95],                  # List of fluxes to be tested when varying flux,
     'L-list': [8, 10,
                16, 32,
@@ -24,7 +23,7 @@ GV = {
                'blue', 'black',
                'purple', 'cyan',
                'orange', 'pink'],            # List of colors for plotting
-    'cmap': 'cool'
+    'cmap': 'plasma_r'
 }
 GV['dx'] = GV['L'] / GV['N']
 GV['large-dx'] = GV['large-L'] / GV['large-N']

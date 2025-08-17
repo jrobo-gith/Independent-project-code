@@ -50,16 +50,16 @@ fig, ax = plt.subplots(ncols=3, figsize=(15, 10))
 plt.subplots_adjust(wspace=0.05)
 
 ax[0].pcolormesh(X, Y, newt_Z, cmap=GV['cmap'])
-ax[0].set_title("Newtonian Fluid", fontsize=16)
+ax[0].set_title("Newtonian Fluid\n$t=29$", fontsize=16)
 ax[0].set_ylabel("Volume Flux $(Q)$", fontsize=14)
 
 ax[1].pcolormesh(X, Y, thin_Z, cmap=GV['cmap'])
 ax[1].set_yticklabels([])
-ax[1].set_title("Shear-thinning Fluid", fontsize=16)
+ax[1].set_title("Shear-thinning Fluid\n$t=28$", fontsize=16)
 
 ax[2].pcolormesh(X, Y, thic_Z, cmap=GV['cmap'])
 ax[2].set_yticklabels([])
-ax[2].set_title("Shear-thickening Fluid", fontsize=16)
+ax[2].set_title("Shear-thickening Fluid\n$t=39$", fontsize=16)
 
 fig.text(0.5, 0.05, "Disjoint Pressure Strength $(A)$", ha="center", fontsize=14, rotation='horizontal')
 
@@ -74,4 +74,3 @@ cb.set_label("Deformation Strength", fontsize=14)
 cb.ax.tick_params(labelsize=14)
 
 fig.savefig("clumped_heatmap.png", bbox_inches='tight')
-

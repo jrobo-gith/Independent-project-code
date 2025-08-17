@@ -31,7 +31,7 @@ def bc(x_zero, x_L, Q):
     """
     Boundary conditions for the BVP to show the height at each boundary and flux at x=0.
     """
-    return np.array([x_zero[0]-1, x_L[1], x_L[0]-Q])
+    return np.array([x_zero[0]-1, x_L[1], Q-x_L[0]])
 
 def solver(q:float, L:int, linear:bool):
     """
@@ -41,10 +41,10 @@ def solver(q:float, L:int, linear:bool):
         pwr = 0
     else:
         pwr = 3
-    x = np.linspace(0, L, 10_000)
+    x = np.linspace(0, L, 1_000_00)
     y = np.zeros((3, x.size))
     y[0] = GV['h0']
-    solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y)
+    solution = solve_bvp(lambda x,y: ODE(x, y, pwr=pwr, Q=q), lambda x,y: bc(x, y, Q=q), x, y, max_nodes=4000000000, tol=1e-2)
     return solution
 
 def plot_solution(solution, q, axes=None):
@@ -53,7 +53,7 @@ def plot_solution(solution, q, axes=None):
     """
     if axes is None:
         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(10, 5))
-    axes.plot(solution.x, solution.y[0], color='g', linestyle='-', linewidth=2)
+    axes.plot(solution.x, solution.y[0], color='g', linestyle='-', linewidth=1, marker='.', )
     axes.set_title(f"Solution to BVP (Q={q}) \n $h(x=0)={GV['h0']}$")
     axes.grid(True)
     axes.set_xlabel('Surface Length $(x)$')
@@ -66,7 +66,7 @@ def main():
     """
     Main function encapsulating all running code
     """
-    solution = solver(GV['Q'], GV['L'], linear=False)
+    solution = solver(0.75, GV['L'], linear=False)
     plot_solution(solution, GV['Q'])
 
 if __name__ == "__main__":

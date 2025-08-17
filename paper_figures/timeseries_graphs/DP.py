@@ -11,13 +11,13 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
-newt_sol_y = np.load("data/newt_sol_dp.npy")
-thin_sol_y = np.load("data/thin_sol_dp.npy")
-thic_sol_y = np.load("data/thic_sol_dp.npy")
+newt_sol_y = np.load("../term_tracker/newtonian_collector/sol_y_dp.npy")
+thin_sol_y = np.load("../term_tracker/thinning_collector/sol_y_dp.npy")
+thic_sol_y = np.load("../term_tracker/thickening_collector/sol_y_dp.npy")
 
-newt_sol_t = np.load("data/newt_sol_t_dp.npy")
-thin_sol_t = np.load("data/thin_sol_t_dp.npy")
-thic_sol_t = np.load("data/thic_sol_t_dp.npy")
+newt_sol_t = np.load("../term_tracker/newtonian_collector/T_dp.npy")
+thin_sol_t = np.load("../term_tracker/thinning_collector/T_dp.npy")
+thic_sol_t = np.load("../term_tracker/thickening_collector/T_dp.npy")
 
 max_t = max([newt_sol_t[-1], thin_sol_t[-1], thic_sol_t[-1]])
 
@@ -35,7 +35,7 @@ LW = 2.5
 
 def plot_lines(axis, sol_y, sol_t):
     rgb_step = int(max(sol_t) / num_intervals)
-    step = int(len(sol_t)/num_intervals)
+    step = int(sol_y.shape[1]/num_intervals)
     intermediate_array = sol_y[:, ::step]
     axis.plot(GV['x'], sol_y[:, 0], c=cmap.to_rgba(0.01), linewidth=LW)
     for i in range(1, num_intervals):

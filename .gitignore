@@ -1,2 +1,6 @@
 ignored_files/
 SLURM_Scripts/
+newtonian_collector/
+thinning_collector/
+thickening_collector/
+timeseries_graphs/data/
