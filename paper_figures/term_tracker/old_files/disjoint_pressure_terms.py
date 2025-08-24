@@ -4,7 +4,7 @@ import json
 import matplotlib as mpl
 
 try:
-    with open('../../glob_var/global_variables.json') as f:
+    with open('../../../glob_var/global_variables.json') as f:
         GV = json.load(f)
 except FileNotFoundError:
     print("Global variables json not found!")

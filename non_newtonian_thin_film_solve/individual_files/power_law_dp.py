@@ -30,6 +30,7 @@ def make_step(h, i, args):
 
     try:
         disjoining_pressure_term = 3 * A * (((h[i+1]+h[i])/2)**-4) * ((h[i+1]-h[i])/dx)
+        print('disjoining_pressure_term', disjoining_pressure_term)
         if linear:
             non_linear_h = 1
         else:
@@ -37,8 +38,10 @@ def make_step(h, i, args):
         third_order = abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term) ** (1 / n)
         third_order_sign = np.sign(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) + disjoining_pressure_term)
         advection_term = h[i]
-
         q_plus = non_linear_h * third_order_sign * third_order + advection_term
+
+        # tracking_3_plus = (abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2])) / (abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2])) + abs(disjoining_pressure_term)))
+        # if np.isnan(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]) / abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]))): print(abs(DX * (-h[i-1] + 3*h[i] - 3*h[i+1] + h[i+2]))+abs(disjoining_pressure_term))
 
     except IndexError:
         q_plus = 0
@@ -62,8 +65,8 @@ def make_step(h, i, args):
 
 if __name__ == '__main__':
     n = 1.0
-    A = 0.0
-    Q = 0.95
+    A = 0.2
+    Q = 0.8
     h_initial = np.ones(GV['N']) * GV['h0']
     h_initial[0] = GV['h0']
     t_span = GV['t-span']
@@ -84,4 +87,4 @@ if __name__ == '__main__':
     plt.grid(True)
     plt.xlabel('Surface Length $(x)$')
     plt.ylabel('Film Height $(y)$')
-    plt.show()
+    # plt.show()

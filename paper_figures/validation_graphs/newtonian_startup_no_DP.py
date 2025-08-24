@@ -8,8 +8,6 @@ from glob_var.FVM.FVM_RHS import FVM_RHS
 from paper_figures.validation_graphs.graph_generator import generate_validation_graph as gvg
 from paper_figures.validation_graphs.error import temporal_error, spatial_error, interpolate
 
-import matplotlib.pyplot as plt
-
 try:
     with open('../../glob_var/global_variables.json') as f:
         GV = json.load(f)

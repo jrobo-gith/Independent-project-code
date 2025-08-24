@@ -11,13 +11,13 @@ try:
 except FileNotFoundError:
     print("Global variables json not found!")
 
-newt_sol_y = np.load("../term_tracker/newtonian_collector/sol_y_dp.npy")
-thin_sol_y = np.load("../term_tracker/thinning_collector/sol_y_dp.npy")
-thic_sol_y = np.load("../term_tracker/thickening_collector/sol_y_dp.npy")
+newt_sol_y = np.load("../term_tracker/newtonian_collector/sol_y_DP.npy")
+thin_sol_y = np.load("../term_tracker/thinning_collector/sol_y_DP.npy")
+thic_sol_y = np.load("../term_tracker/thickening_collector/sol_y_DP.npy")
 
-newt_sol_t = np.load("../term_tracker/newtonian_collector/T_dp.npy")
-thin_sol_t = np.load("../term_tracker/thinning_collector/T_dp.npy")
-thic_sol_t = np.load("../term_tracker/thickening_collector/T_dp.npy")
+newt_sol_t = np.load("../term_tracker/newtonian_collector/sol_t_DP.npy")
+thin_sol_t = np.load("../term_tracker/thinning_collector/sol_t_DP.npy")
+thic_sol_t = np.load("../term_tracker/thickening_collector/sol_t_DP.npy")
 
 max_t = max([newt_sol_t[-1], thin_sol_t[-1], thic_sol_t[-1]])
 
@@ -29,7 +29,7 @@ cmap.set_array([])
 fig, ax = plt.subplots(nrows=3, figsize=(15, 15))
 fig.subplots_adjust(hspace=0.05)
 
-num_intervals = 5
+num_intervals = 7
 
 LW = 2.5
 
@@ -76,4 +76,4 @@ cb.set_label("Time (s)", fontsize=16)
 cb.ax.tick_params(labelsize=14)
 
 fig.suptitle(f"Timeseries graph showing evolution of three rheologies in time\nwith disjoining pressure $(A={A})$", fontsize=18, y=0.92)
-fig.savefig("DP.png", bbox_inches='tight')
+fig.savefig("DP_more_intervals.png", bbox_inches='tight')

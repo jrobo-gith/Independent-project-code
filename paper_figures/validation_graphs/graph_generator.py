@@ -37,14 +37,14 @@ def generate_validation_graph(L_arrays:list, Q_arrays:list, space_error_y_arrays
      range(len(GV['Q-list']))]
     [large_top.plot(GV['x'], non_linear_solution_Q[i], color=GV['colors'][i], label=f"$Q={GV['Q-list'][i]}$",
                      linestyle='-') for i in range(len(GV['Q-list']))]
-    [large_top.scatter(GV['x'], linear_SS[i], color=GV['colors'][i], marker='x', s=1) for i in range(len(GV['Q-list']))]
-    [large_top.scatter(GV['x'], non_linear_SS[i], color=GV['colors'][i], marker='x', s=5) for i in
+    [large_top.scatter(GV['x'], linear_SS[i], color=GV['colors'][i], marker='x', s=2) for i in range(len(GV['Q-list']))]
+    [large_top.scatter(GV['x'], non_linear_SS[i], color=GV['colors'][i], marker='x', s=2) for i in
      range(len(GV['Q-list']))]
     large_top.legend(loc='lower right')
     large_top.grid(True)
-    large_top.set_title(f"Complete BVP varying flux Q at surface length $L={GV['L']}$", fontsize=16)
-    large_top.set_xlabel("Surface Length $(x)$", fontsize=14)
-    large_top.set_ylabel("Film Height $(y)$", fontsize=14)
+    large_top.set_title(r"Complete BVP varying flux $\tilde{h}$" + f"at surface length $L={GV['L']}$", fontsize=16)
+    large_top.set_xlabel(r"Surface Length $(\tilde{x})$", fontsize=14)
+    large_top.set_ylabel(r"Film Height $(\tilde{y})$", fontsize=14)
     large_top.set_ylim(0.7, 1)
 
     [length_graph.plot(np.linspace(0, L_list[i], GV['N']), linear_solution[i], linestyle='--', color=GV['colors'][i]) for i in range(len(L_list))]
@@ -54,7 +54,7 @@ def generate_validation_graph(L_arrays:list, Q_arrays:list, space_error_y_arrays
     length_graph.grid(True)
     length_graph.set_xlim(0, 5)
     length_graph.set_ylim(0.7, 1.0)
-    length_graph.set_title("Varying L, visualising downward meniscus", fontsize=16)
+    length_graph.set_title(r"Varying $\tilde{L}$, visualising downward meniscus", fontsize=16)
     
     [time_error.plot(time_linear_error_x[i], time_linear_error_y[i], linestyle='--', color=GV['colors'][i]) for i in range(len(GV['Q-list']))]
     [time_error.plot(time_non_linear_error_x[i], time_non_linear_error_y[i], linestyle='-', label=f"$Q={GV['Q-list'][i]}$", color=GV['colors'][i]) for i in
@@ -62,7 +62,7 @@ def generate_validation_graph(L_arrays:list, Q_arrays:list, space_error_y_arrays
     time_error.grid(True)
     time_error.set_title("% Deviation from steady state\nover time", fontsize=16)
     time_error.set_ylabel("Error (%)", fontsize=14)
-    time_error.set_xlabel("Time (s)", fontsize=14)
+    time_error.set_xlabel(r"Time $(\tilde{t})$", fontsize=14)
 
     space_x = np.linspace(0, 16, len(space_linear_error_y[0]))
     [space_error.plot(space_x, space_linear_error_y[i], linestyle='--', color=GV['colors'][i]) for i in
@@ -72,11 +72,11 @@ def generate_validation_graph(L_arrays:list, Q_arrays:list, space_error_y_arrays
      range(len(GV['Q-list']))]
     space_error.grid(True)
     space_error.set_title("% Deviation from steady state at\nfinal timestep", fontsize=16)
-    space_error.set_xlabel("Surface Length $(x)$", fontsize=14)
+    space_error.set_xlabel(r"Surface Length $(\tilde{x})$", fontsize=14)
     space_error.set_ylabel("Error (%)", fontsize=14)
 
     fig.suptitle(
-        "Validation graph varying flux Q with fixed L (Top) the error\nover time (middle left) and against the steady state model (middle right)\nand length scale L with fixed Q (Bottom)",
+        r"Validation graph varying flux $\tilde{Q}$ with fixed $\tilde{L}$ (Top) the error"+"\nover time (middle left) and against the steady state model (middle right)\nand length scale"+r" $\tilde{L}$ with fixed $\tilde{Q}$ (Bottom)",
         fontsize=16, y=1.)
     plt.tight_layout()
     fig.savefig(directory, bbox_inches='tight')

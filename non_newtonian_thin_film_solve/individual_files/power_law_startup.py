@@ -61,11 +61,9 @@ def make_step(h, i, args):
     return q_plus, q_minus
 
 if __name__ == '__main__':
-    n = 1.2
+    n = 1.0
     h_initial = np.ones(GV['N']) * GV['h0']
     t_span = GV['t-span']
-    L = GV['L']
-    dx = L/GV['N']
     args = [make_step, GV['dx'], 3, GV['Q'], None, n, False, GV['N']]
 
     steady_state.terminal = True
@@ -89,4 +87,4 @@ if __name__ == '__main__':
     ax.set_title(f"Startup flow with $h_0$={GV['h0']}, Q={GV['Q']} and n={n}")
     ax.set_ylabel('height$(h)$')
     ax.set_xlabel('Length $(x)$')
-    fig.show()
+    plt.show()

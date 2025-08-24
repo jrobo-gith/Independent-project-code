@@ -13,9 +13,9 @@ newt_sol_y = np.load("../term_tracker/newtonian_collector/sol_y.npy")
 thin_sol_y = np.load("../term_tracker/thinning_collector/sol_y.npy")
 thic_sol_y = np.load("../term_tracker/thickening_collector/sol_y.npy")
 
-newt_sol_t = np.load("../term_tracker/newtonian_collector/T.npy")
-thin_sol_t = np.load("../term_tracker/thinning_collector/T.npy")
-thic_sol_t = np.load("../term_tracker/thickening_collector/T.npy")
+newt_sol_t = np.load("../term_tracker/newtonian_collector/sol_t.npy")
+thin_sol_t = np.load("../term_tracker/thinning_collector/sol_t.npy")
+thic_sol_t = np.load("../term_tracker/thickening_collector/sol_t.npy")
 
 print(newt_sol_y.shape, thin_sol_y.shape, thic_sol_y.shape)
 
@@ -30,7 +30,7 @@ cmap.set_array([])
 fig, ax = plt.subplots(nrows=3, figsize=(15, 15))
 fig.subplots_adjust(hspace=0.05)
 
-num_intervals = 5
+num_intervals = 7
 
 LW = 2.5
 
@@ -64,22 +64,22 @@ ax[1].tick_params(axis='y', labelsize=14)
 ax[2].grid(True)
 ax[2].set_ylabel("Shear-thickening Fluid", fontsize=14)
 ax[2].set_xticks(np.arange(0, GV['L'] + 1, 2))
-ax[2].set_xlabel("Surface Length $(x)$", fontsize=14)
+ax[2].set_xlabel(r"Surface Length $(\tilde{x})$", fontsize=14)
 ax[2].set_yticks(np.arange(0, GV['h0']+0.1, 0.1))
 ax[2].tick_params(axis='y', labelsize=14)
 ax[2].tick_params(axis='x', labelsize=14)
 
-fig.text(0.05, 0.5, "Film Height $(h)$", rotation='vertical', fontsize=16, va='center', ha='center')
+fig.text(0.05, 0.5, r"Film Height $(\tilde{h})$", rotation='vertical', fontsize=16, va='center', ha='center')
 
-ax[0].set_ylim(0.6, 1.05)
-ax[1].set_ylim(0.6, 1.05)
-ax[2].set_ylim(0.6, 1.05)
+ax[0].set_ylim(0.7, 1.05)
+ax[1].set_ylim(0.7, 1.05)
+ax[2].set_ylim(0.7, 1.05)
 
 cbar_ax = fig.add_axes([0.92, 0.11, 0.03, 0.77])
 cb = fig.colorbar(cmap, cax=cbar_ax, ticks=np.arange(0, max_t + 1, 5))
-cb.set_label("Time (s)", fontsize=16)
+cb.set_label(r"Time $(\tilde{t})$", fontsize=16)
 cb.ax.tick_params(labelsize=14)
 
 fig.suptitle(f"Timeseries graph showing evolution of three rheologies in time", fontsize=18, y=0.92)
 fig.show()
-# fig.savefig("no_DP.png", bbox_inches='tight')
+fig.savefig("no_DP_more_intervals.png", bbox_inches='tight')

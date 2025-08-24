@@ -35,10 +35,10 @@ def solver(q:float, L:int, n:float, linear:bool=False):
     Uses scipy integrate to solve the boundary value problem
     """
 
-    x = np.linspace(0, L, 1_000_000)
+    x = np.linspace(0, L, 1000)
     y = np.ones((3, x.size))
     y[0] = GV['h0']
-    solution = solve_bvp(lambda x,y: ODE(x, y, Q=q, n=n, linear=linear), lambda x,y: bc(x, y, Q=q), x, y, tol=1e-2, max_nodes=4000000000)
+    solution = solve_bvp(lambda x,y: ODE(x, y, Q=q, n=n, linear=linear), lambda x,y: bc(x, y, Q=q), x, y, tol=1e-7, max_nodes=4000000000)
     return solution
 
 def plot_solution(solution, q, axes=None):

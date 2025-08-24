@@ -28,41 +28,36 @@ def make_ode(collector):
         h[0] = GV['h0']
 
         # i = 1
-        q_plus, q_minus, ADV, NLT, TOT, DPT = make_step(h=h, i=1, args=args)
+        q_plus, q_minus, SGN, MAG, RAT = make_step(h=h, i=1, args=args)
         dhdt[1] = - (q_plus - Q) / dx
 
-        local_collector[:, 0, 1] = ADV
-        local_collector[:, 1, 1] = NLT
-        local_collector[:, 2, 1] = TOT
-        local_collector[:, 3, 1] = DPT
+        local_collector[:, 0, 1] = SGN
+        local_collector[:, 1, 1] = MAG
+        local_collector[:, 2, 1] = RAT
 
         # i = N - 2
-        q_plus, q_minus, ADV, NLT, TOT, DPT = make_step(h=h, i=N - 2, args=args)
+        q_plus, q_minus, SGN, MAG, RAT = make_step(h=h, i=N - 2, args=args)
         dhdt[N - 2] = - (h[N - 2] - q_minus) / dx
 
-        local_collector[:, 0, -1] = ADV
-        local_collector[:, 1, -1] = NLT
-        local_collector[:, 2, -1] = TOT
-        local_collector[:, 3, -1] = DPT
+        local_collector[:, 0, -1] = SGN
+        local_collector[:, 1, -1] = MAG
+        local_collector[:, 2, -1] = RAT
 
         # i = N - 1
         h[N - 1] = h[N - 2]
         dhdt[N - 1] = dhdt[N - 2]
 
         for i in range(2, N - 2):
-            q_plus, q_minus, ADV, NLT, TOT, DPT = make_step(h=h, i=i, args=args)
+            q_plus, q_minus, SGN, MAG, RAT = make_step(h=h, i=i, args=args)
             dhdt[i] = -(q_plus - q_minus) / dx
 
-            local_collector[:, 0, i] = ADV
-            local_collector[:, 1, i] = NLT
-            local_collector[:, 2, i] = TOT
-            local_collector[:, 3, i] = DPT
+            local_collector[:, 0, i] = SGN
+            local_collector[:, 1, i] = MAG
+            local_collector[:, 2, i] = RAT
 
         collector[0].append(local_collector[:, 0, :])
         collector[1].append(local_collector[:, 1, :])
         collector[2].append(local_collector[:, 2, :])
-        collector[3].append(local_collector[:, 3, :])
-        collector[4].append(t)
 
         return dhdt
 

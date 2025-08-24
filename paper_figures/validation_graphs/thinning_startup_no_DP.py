@@ -8,8 +8,6 @@ from glob_var.FVM.FVM_RHS import FVM_RHS
 from paper_figures.validation_graphs.graph_generator import generate_validation_graph as gvg
 from paper_figures.validation_graphs.error import temporal_error, spatial_error, interpolate
 
-import matplotlib.pyplot as plt
-
 try:
     with open('../../glob_var/global_variables.json') as f:
         GV = json.load(f)
@@ -118,4 +116,4 @@ gvg(L_arrays=[linear_solution, non_linear_solution], Q_arrays=[linear_solution_Q
     space_error_y_arrays=[linear_error_Q, non_linear_error_Q],
     time_error_x_arrays=[linear_temporal_x, non_linear_temporal_x],
     time_error_y_arrays=[linear_temporal_errors, non_linear_temporal_errors],
-    steady_states_array=[linear_SS, non_linear_SS], directory="graphs/thickening_startup.png", rheology="Shear-Thickening")
+    steady_states_array=[linear_SS, non_linear_SS], directory="graphs/thinning_startup.png", rheology="Shear-Thinning")

@@ -4,21 +4,21 @@ import json
 import matplotlib as mpl
 
 try:
-    with open('../../glob_var/global_variables.json') as f:
+    with open('../../../glob_var/global_variables.json') as f:
         GV = json.load(f)
 except FileNotFoundError:
     print("Global variables json not found!")
 
-term = "third order"
+term = "advection"
 
-newt = np.load("newtonian_collector/TOT.npy")[:, :, 1:298]
-newt_dp = np.load("newtonian_collector/TOT_dp.npy")[:, :, 1:298]
+newt = np.load("newtonian_collector/ADV.npy")[:, :, 1:298]
+newt_dp = np.load("newtonian_collector/ADV_dp.npy")[:, :, 1:298]
 
-thin = np.load("thinning_collector/TOT.npy")[:, :, 1:298]
-thin_dp = np.load("thinning_collector/TOT_dp.npy")[:, :, 1:298]
+thin = np.load("thinning_collector/ADV.npy")[:, :, 1:298]
+thin_dp = np.load("thinning_collector/ADV_dp.npy")[:, :, 1:298]
 
-thic = np.load("thickening_collector/TOT.npy")[:, :, 1:298]
-thic_dp = np.load("thickening_collector/TOT_dp.npy")[:, :, 1:298]
+thic = np.load("thickening_collector/ADV.npy")[:, :, 1:298]
+thic_dp = np.load("thickening_collector/ADV_dp.npy")[:, :, 1:298]
 
 T_newt = np.load("newtonian_collector/T.npy")
 T_newt_dp = np.load("newtonian_collector/T_dp.npy")
@@ -82,7 +82,7 @@ ax[0, 1].grid(True)
 ax[0, 1].set_ylabel("Newtonian Fluid, $DP=0.15$", fontsize=14)
 ax[0, 1].set_xticks(np.arange(0, GV['L'] + 1, 2))
 ax[0, 1].set_xticklabels([])
-# ax[0, 1].set_yticks(np.arange(0, GV['h0']+0.1, 0.1))
+ax[0, 1].set_yticks(np.arange(-1, GV['h0']+0.1, 0.2))
 ax[0, 1].tick_params(axis='y', labelsize=14)
 ax[0, 1].set_title("(B)", fontsize=16)
 
@@ -97,7 +97,7 @@ ax[1, 1].grid(True)
 ax[1, 1].set_ylabel("Shear-thinning Fluid $DP=0.15$", fontsize=14)
 ax[1, 1].set_xticks(np.arange(0, GV['L'] + 1, 2))
 ax[1, 1].set_xticklabels([])
-# ax[1, 1].set_yticks(np.arange(0, GV['h0']+0.1, 0.1))
+ax[1, 1].set_yticks(np.arange(-1, GV['h0']+0.1, 0.2))
 ax[1, 1].tick_params(axis='y', labelsize=14)
 
 ax[2, 0].grid(True)
@@ -112,7 +112,7 @@ ax[2, 1].grid(True)
 ax[2, 1].set_ylabel("Shear-thickening Fluid $DP=0.15$", fontsize=14)
 ax[2, 1].set_xticks(np.arange(0, GV['L'] + 1, 2))
 ax[2, 1].set_xlabel("Surface Length $(x)$", fontsize=14)
-# ax[2, 1].set_yticks(np.arange(0, GV['h0']+0.1, 0.1))
+ax[2, 1].set_yticks(np.arange(-1, GV['h0']+0.1, 0.2))
 ax[2, 1].tick_params(axis='y', labelsize=14)
 ax[2, 1].tick_params(axis='x', labelsize=14)
 
@@ -122,9 +122,9 @@ ax[0, 0].set_ylim(-0.3, 0.1)
 ax[1, 0].set_ylim(-0.3, 0.1)
 ax[2, 0].set_ylim(-0.3, 0.1)
 
-ax[0, 1].set_ylim(-1, 1)
-ax[1, 1].set_ylim(-0.3, 0.3)
-ax[2, 1].set_ylim(-1, 1)
+ax[0, 1].set_ylim(-0.8, 0.8)
+ax[1, 1].set_ylim(-0.8, 0.8)
+ax[2, 1].set_ylim(-0.8, 0.8)
 
 cbar_ax = fig.add_axes([0.92, 0.11, 0.03, 0.77])
 cb = fig.colorbar(cmap, cax=cbar_ax, ticks=np.arange(0, max_t + 1, 5))
@@ -133,4 +133,4 @@ cb.ax.tick_params(labelsize=14)
 
 fig.suptitle(f"Timeseries graph showing evolution of the {term} term in time", fontsize=18, y=0.92)
 
-fig.savefig("graphs/TOT_diff.png", bbox_inches='tight')
+fig.savefig("graphs/ADV_diff.png", bbox_inches='tight')
